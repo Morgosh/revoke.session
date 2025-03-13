@@ -1,0 +1,74 @@
+[
+    {
+      "inputs": [],
+      "name": "k1ListValidators",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "validatorList",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }, 
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "k1IsOwner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "k1ListOwners",
+      "outputs": [
+        {
+          "name": "k1OwnerList",
+          "type": "address[]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "signedHash",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct ERC1271Handler.AGWMessage",
+          "name": "agwMessage",
+          "type": "tuple"
+        }
+      ],
+      "name": "getEip712Hash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]

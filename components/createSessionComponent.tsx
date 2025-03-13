@@ -3,18 +3,35 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { LimitType, SessionConfig, SessionClient, getSessionHash  } from "@abstract-foundation/agw-client/sessions";
 import { useRevokeSessions } from "@abstract-foundation/agw-react";
 import { abstractTestnet } from "viem/chains"; // Use abstract for mainnet
-import { toFunctionSelector, parseEther, parseAbi } from "viem";
+import { toFunctionSelector, parseEther, parseAbi, recoverMessageAddress } from "viem";
 import { useAccount } from "wagmi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSignMessage } from 'wagmi'
+import { getMessage, getProvider, verifySignatureSA } from "@/functions";
+// import { signMessage } from '@wagmi/core'
+
 
 export default function CreateSessionComponent() {
   const { address } = useAccount();
+  const { data: signMessageData, signMessage } = useSignMessage();
+
   const { data: agwClient } = useAbstractClient();
 
   const [currentSessionClient, setCurrentSessionClient] = useState<SessionClient | null>(null);
   const [currentSessionConfig, setCurrentSessionConfig] = useState<SessionConfig | null>(null);
   const { revokeSessionsAsync } = useRevokeSessions();
   const [sessionHash, setSessionHash] = useState<`0x${string}` | undefined>();
+  // const { signMessage } = useSignMessage();
+
+  useEffect(() => {
+    async function doit() {
+      if (!signMessageData) return;
+      console.log("signed data", signMessageData);
+      const isValid = await verifySignatureSA(getMessage(), signMessageData, process.env.NEXT_PUBLIC_SA_ADDRESS!, getProvider());
+      console.log("Signature is valid", isValid);
+    }
+    doit();
+  }, [signMessageData]);
 
   async function handleCreateSession() {
     const sessionPrivateKey = generatePrivateKey();
@@ -45,6 +62,7 @@ export default function CreateSessionComponent() {
         transferPolicies: [],
       }
     });
+
     console.log("Session created with hash", transactionHash);
     setCurrentSessionConfig(session);
     setCurrentSessionClient(agwClient!.toSessionClient(sessionSigner, session));
@@ -77,9 +95,33 @@ export default function CreateSessionComponent() {
     console.log("res1", res1);
   }
 
+  async function handleSignMessage() {
+    try {
+      const message = getMessage();
+      await signMessage({ message });
+    } catch (error) {
+      console.error("Error signing message", error);
+    }
+    // console.log("here?", )
+    // const recoveredAddress2 = await recoverMessageAddress({
+    //   message,
+    //   signature: "0x000000000000000000000000000000000000000000000000000000000000004000000000000000000000000074b9ae28ec45e3fa11533c7954752597c3de3e7a0000000000000000000000000000000000000000000000000000000000000041a9e80b446c9dfeeaab4530040d3b7ae62468bbd774a8c07bb140d7a313ab4c891d24992a1939c3588a30b3a0a15c512b8859c3c5529bac5a34658b6083488e161c00000000000000000000000000000000000000000000000000000000000000"
+    // })
+    // console.log("Recovered address2", recoveredAddress2);
+
+    // const recoveredAddress = await recoverMessageAddress({
+    //   message,
+    //   signature: "0x000000000000000000000000000000000000000000000000000000000000004000000000000000000000000074b9ae28ec45e3fa11533c7954752597c3de3e7a000000000000000000000000000000000000000000000000000000000000004149174a28bdbdde00500f753a6286434ce683dde724ba2f765ee7683833a720967d942fb79250fbe0df9ab40130ac7504ad5b308bebc5f8ba89133f42995c91401b00000000000000000000000000000000000000000000000000000000000000"
+    // })
+    // console.log("here.");
+    // console.log("Recovered address1", recoveredAddress);
+  }
+
   return <div>
-    <button onClick={handleCreateSession}>Create Session</button>;
-    <button onClick={sendTransactionWithSessionKey}>Send Transaction</button>;
-    <button onClick={handleRevokeSession}>Revoke Session</button>;
+    <h1>Admin panel</h1>
+    <button onClick={handleCreateSession} className="bg-green border border-green-500/20 text-green-400 px-3 py-1 rounded hover:bg-green-500/20 transition-colors">Create Test Session</button>
+    <button onClick={sendTransactionWithSessionKey} className="bg-green border border-green-500/20 text-green-400 px-3 py-1 rounded hover:bg-green-500/20 transition-colors">Send session Transaction</button>
+    <button onClick={handleRevokeSession} className="bg-green border border-green-500/20 text-green-400 px-3 py-1 rounded hover:bg-green-500/20 transition-colors">Revoke Session</button>
+    <button onClick={handleSignMessage} className="bg-green border border-green-500/20 text-green-400 px-3 py-1 rounded hover:bg-green-500/20 transition-colors">Sign Message wagmi</button>
   </div>
 }

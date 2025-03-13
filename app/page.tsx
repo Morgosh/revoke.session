@@ -12,6 +12,7 @@ import { ConnectKitButton } from "connectkit";
 import SessionsComponent from "@/components/getSessions";
 import CreateSessionComponent from "@/components/createSessionComponent";
 import { getBlockExplorerUrl } from "@/functions";
+import InteractWithKey from "@/components/interactWithKey";
 
 export default function Home() {
   const { logout } = useLoginWithAbstract();
@@ -132,9 +133,14 @@ export default function Home() {
                     <SessionsComponent/>
                   </div>
                   {
-                    process.env.NEXT_PUBLIC_ADMIN == "TRUE" && <div>
+                    process.env.NEXT_PUBLIC_ADMIN == "TRUE" && <>
+                    <div>
                       <CreateSessionComponent/>
                     </div>
+                    <div>
+                      <InteractWithKey/>
+                    </div>
+                    </>
                   }
                   
                   {!!transactionReceipt && (
