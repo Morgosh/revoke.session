@@ -3,7 +3,7 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { LimitType, SessionConfig, SessionClient, getSessionHash  } from "@abstract-foundation/agw-client/sessions";
 import { useRevokeSessions } from "@abstract-foundation/agw-react";
 import { abstractTestnet } from "viem/chains"; // Use abstract for mainnet
-import { toFunctionSelector, parseEther, parseAbi, recoverMessageAddress } from "viem";
+import { toFunctionSelector, parseEther, parseAbi } from "viem";
 import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 import { useSignMessage } from 'wagmi'
