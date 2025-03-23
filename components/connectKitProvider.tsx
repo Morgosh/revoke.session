@@ -9,7 +9,7 @@ import { abstractTestnet, abstract } from "viem/chains"; // Use abstract for mai
 import { abstractWalletConnector } from "@abstract-foundation/agw-react/connectors";
 
 
-const chosenNetwork = process.env.NEXT_PUBLIC_NETWORK === "mainnet" ? abstract : abstractTestnet;
+const chosenNetwork = process.env.NEXT_PUBLIC_NETWORK === "testnet" ? abstractTestnet : abstract;
 
 export const config = createConfig({
   connectors: [abstractWalletConnector()],

@@ -13,6 +13,7 @@ import SessionsComponent from "@/components/getSessions";
 import CreateSessionComponent from "@/components/createSessionComponent";
 import { getBlockExplorerUrl } from "@/functions";
 import InteractWithKey from "@/components/interactWithKey";
+import K1SignersComponent from "@/components/manageK1Owners";
 
 export default function Home() {
   const { logout } = useLoginWithAbstract();
@@ -131,6 +132,9 @@ export default function Home() {
                   </div>
                   <div>
                     <SessionsComponent/>
+                  </div>
+                  <div>
+                    <K1SignersComponent></K1SignersComponent>
                   </div>
                   {
                     process.env.NEXT_PUBLIC_ADMIN == "TRUE" && <>
