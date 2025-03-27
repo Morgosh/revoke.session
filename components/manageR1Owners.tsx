@@ -5,29 +5,27 @@ import { ethers } from 'ethers';
 import { getProvider } from '@/functions';
 import K1Abi from '@/abi/SmartAccount.abi.json';
 import { useAbstractClient } from '@abstract-foundation/agw-react';
-// import { parseAbi } from 'viem';
 
-export default function K1SignersComponent() {
+export default function R1SignersComponent() {
   const { address } = useAccount();
   const { data: agwClient } = useAbstractClient();
-  const [k1Owners, setK1Owners] = useState<string[]>([]);
+  const [r1Owners, setR1Owners] = useState<string[]>([]);
   const [newOwner, setNewOwner] = useState<`0x{string}`>('' as `0x{string}`)
   const [hoveredOwner, setHoveredOwner] = useState<string | null>(null);
 
   useEffect(() => {
     if (address) {
-      fetchK1OwnerList();
+      fetchR1OwnerList();
     }
   }, [address]);
 
-  async function fetchK1OwnerList() {
-    console.log('Fetching K1 owner list...');
+  async function fetchR1OwnerList() {
+    console.log('Fetching R1 owner list...');
     const provider = getProvider();
     const contract = new ethers.Contract(address!, K1Abi, provider);
-    // Assuming your contract has a k1ListOwners() method that returns an array of owner addresses
-    const owners = await contract.k1ListOwners();
-    console.log('K1 Owners:', owners);
-    setK1Owners(owners);
+    const owners = await contract.r1ListOwners();
+    console.log('R1 Owners:', owners);
+    setR1Owners(owners);
   }
 
   async function handleAddOwner() {
@@ -36,25 +34,25 @@ export default function K1SignersComponent() {
     const transactionHash = await agwClient.writeContract({
       abi: K1Abi,
       address: address!,
-      functionName: 'k1AddOwner',
+      functionName: 'r1AddOwner',
       args: [newOwner],
     });
     console.log('Owner added:', newOwner, transactionHash);
     setNewOwner('' as `0x{string}`);
-    fetchK1OwnerList();
+    fetchR1OwnerList();
   }
 
   async function handleRemoveOwner(owner: `0x{string}`) {
-    if (k1Owners.length <= 1 || !agwClient) return;
+    if (r1Owners.length <= 1 || !agwClient) return;
     console.log('Removing owner:', owner);
     const transactionHash = await agwClient.writeContract({
-      abi: K1Abi, // parseAbi(['function K1RemoveOwner(address addr) external']),
+      abi: K1Abi,
       address: address!,
-      functionName: 'k1RemoveOwner',
+      functionName: 'r1RemoveOwner',
       args: [owner],
     });
     console.log('Owner removed:', owner, transactionHash);
-    fetchK1OwnerList();
+    fetchR1OwnerList();
   }
 
   const shortenAddress = (addr: string, startLength = 6, endLength = 4) => {
@@ -63,7 +61,7 @@ export default function K1SignersComponent() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-white">K1 Signers</h1>
+      <h1 className="text-2xl font-bold mb-4 text-white">R1 Signers</h1>
       <div className="mb-4">
         <input
           type="text"
@@ -79,9 +77,9 @@ export default function K1SignersComponent() {
           Add Owner
         </button>
       </div>
-      {k1Owners.length === 0 ? (
+      {r1Owners.length === 0 ? (
         <p className="text-green-500 font-bold">
-          No k1 owners found for this smart wallet.
+          No R1 owners found for this smart wallet.
         </p>
       ) : (
         <div className="overflow-x-auto">
@@ -97,13 +95,13 @@ export default function K1SignersComponent() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
-              {k1Owners.map((owner, index) => (
+              {r1Owners.map((owner, index) => (
                 <tr key={index} className="hover:bg-white/5 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                     {shortenAddress(owner)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
-                    {k1Owners.length > 1 ? (
+                    {r1Owners.length > 1 ? (
                       <button
                         onClick={() => handleRemoveOwner(owner as any)}
                         onMouseEnter={() => setHoveredOwner(owner)}
@@ -136,4 +134,4 @@ export default function K1SignersComponent() {
       )}
     </div>
   );
-}
+} 
